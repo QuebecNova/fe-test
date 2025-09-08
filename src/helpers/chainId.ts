@@ -1,4 +1,4 @@
-import type { SupportedChainName } from "../../test-task-types"
+import type { SupportedChainName } from '../../test-task-types'
 
 export const chainIdToName = (chainId: number): SupportedChainName => {
     switch (chainId.toString()) {

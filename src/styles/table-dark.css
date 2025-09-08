@@ -192,7 +192,8 @@
     color: #e0e0e0;
 }
 
-.token-cell:has(.col-token), .token-row.loading-row {
+.token-cell:has(.col-token),
+.token-row.loading-row {
     flex: 1.1;
     text-align: left;
     padding-left: 12px;
@@ -370,7 +371,7 @@ svg {
 /* Custom scrollbar for the table */
 ::-webkit-scrollbar {
     width: 8px;
-    height:8px;
+    height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -529,4 +530,3 @@ svg {
 .col-audit .audit-icon span {
     opacity: 0.8;
 }
-

@@ -1,4 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FilterPanel } from './components/Filters'
+import { TokenTable } from './components/TokenTable'
+import { convertToTokenData } from './helpers/convertToTokenData'
+import { useScannerData } from './hooks/useScannerData'
+import { useWebSocket } from './hooks/useWebSocket'
 import type {
     GetScannerResultParams,
     IncomingWebSocketMessage,
@@ -6,11 +11,6 @@ import type {
     ScannerPairsEventPayload,
     TickEventPayload,
 } from './types/test-task-types'
-import { FilterPanel } from './components/Filters'
-import { TokenTable } from './components/TokenTable'
-import { convertToTokenData } from './helpers/convertToTokenData'
-import { useScannerData } from './hooks/useScannerData'
-import { useWebSocket } from './hooks/useWebSocket'
 import type { TokenData } from './types/TokenData'
 
 const TRENDING_TOKENS_FILTERS: GetScannerResultParams = {
@@ -145,21 +145,18 @@ const ScannerTables: React.FC = () => {
         []
     )
 
-    const handleScannerPairsEvent = useCallback(
-        (data: ScannerPairsEventPayload) => {
-            const newPairs = data.results.pairs || []
-            const newTokens = newPairs.map(convertToTokenData)
+    const handleScannerPairsEvent = useCallback((data: ScannerPairsEventPayload) => {
+        const newPairs = data.results.pairs || []
+        const newTokens = newPairs.map(convertToTokenData)
 
-            trendingDataRef.current.updateData((prevTokens) => {
-                return mergeTokenData(prevTokens, newTokens, trendingFilters)
-            })
+        trendingDataRef.current.updateData((prevTokens) => {
+            return mergeTokenData(prevTokens, newTokens, trendingFilters)
+        })
 
-            newTokensDataRef.current.updateData((prevTokens) => {
-                return mergeTokenData(prevTokens, newTokens, newTokensFilters)
-            })
-        },
-        []
-    )
+        newTokensDataRef.current.updateData((prevTokens) => {
+            return mergeTokenData(prevTokens, newTokens, newTokensFilters)
+        })
+    }, [])
 
     const { send, isConnected } = useWebSocket(import.meta.env.VITE_WS_URL, handleWebSocketMessage)
 
@@ -346,8 +343,16 @@ const ScannerTables: React.FC = () => {
             <h2>Token Scanner</h2>
 
             <div className="filters-container">
-                <FilterPanel title={'Trending Tokens filters'} filters={trendingFilters} onFiltersChange={setTrendingFilters} />
-                <FilterPanel title={'New Tokens filters'} filters={newTokensFilters} onFiltersChange={setNewTokensFilters} />
+                <FilterPanel
+                    title={'Trending Tokens filters'}
+                    filters={trendingFilters}
+                    onFiltersChange={setTrendingFilters}
+                />
+                <FilterPanel
+                    title={'New Tokens filters'}
+                    filters={newTokensFilters}
+                    onFiltersChange={setNewTokensFilters}
+                />
             </div>
 
             <div className="tables-container">

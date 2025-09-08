@@ -51,11 +51,14 @@ export const useWebSocket = (url: string, onMessage: (message: IncomingWebSocket
         return ws && ws.readyState === WebSocket.OPEN
     }, [ws])
 
-    const send = useCallback((message: any) => {
-        if (isConnected) {
-            ws.send(JSON.stringify(message))
-        }
-    }, [ws])
+    const send = useCallback(
+        (message: any) => {
+            if (isConnected) {
+                ws.send(JSON.stringify(message))
+            }
+        },
+        [ws]
+    )
 
     const disconnect = useCallback(() => {
         if (ws) {
@@ -75,5 +78,5 @@ export const useWebSocket = (url: string, onMessage: (message: IncomingWebSocket
         return () => disconnect()
     }, [connect, disconnect])
 
-    return { send, disconnect, isConnected}
+    return { send, disconnect, isConnected }
 }

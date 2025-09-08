@@ -70,13 +70,13 @@ export const createColumns = (): ColumnDef<TokenData>[] => [
     {
         accessorKey: 'priceChangePcs.6h',
         header: '6h',
-        cell: ({ row }) => <PriceChangeCell token={row.original} colKey={'6h'}/>,
+        cell: ({ row }) => <PriceChangeCell token={row.original} colKey={'6h'} />,
         size: 80,
     },
     {
         accessorKey: 'priceChangePcs.24h',
         header: '24h',
-        cell: ({ row }) => <PriceChangeCell token={row.original} colKey={'24h'}/>,
+        cell: ({ row }) => <PriceChangeCell token={row.original} colKey={'24h'} />,
         size: 80,
     },
     {

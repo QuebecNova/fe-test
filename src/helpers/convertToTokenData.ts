@@ -1,5 +1,5 @@
-import type { ScannerResult, SupportedChainName } from "../types/test-task-types"
-import type { TokenData } from "../types/TokenData"
+import type { ScannerResult, SupportedChainName } from '../types/test-task-types'
+import type { TokenData } from '../types/TokenData'
 
 const chainIdToName = (chainId: number): SupportedChainName => {
     switch (chainId.toString()) {
@@ -70,4 +70,3 @@ export const convertToTokenData = (result: ScannerResult): TokenData => {
         },
     }
 }
-

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { GetScannerResultParams, ScannerApiResponse } from '../types/test-task-types'
 import { convertToTokenData } from '../helpers/convertToTokenData'
+import type { GetScannerResultParams, ScannerApiResponse } from '../types/test-task-types'
 import type { TokenData } from '../types/TokenData'
 
 export const useScannerData = (filters: GetScannerResultParams) => {
@@ -16,39 +16,41 @@ export const useScannerData = (filters: GetScannerResultParams) => {
         dataRef.current = data
     }, [data])
 
+    const fetchData = useCallback(
+        async (pageNum: number, append: boolean = false) => {
+            try {
+                setLoading(true)
+                const params = new URLSearchParams()
 
-    const fetchData = useCallback(async (pageNum: number, append: boolean = false) => {
-        try {
-            setLoading(true)
-            const params = new URLSearchParams()
-
-            Object.entries(filters).forEach(([key, value]) => {
-                if (value !== null && value !== undefined) {
-                    if (Array.isArray(value)) {
-                        value.forEach((v) => params.append(key, v.toString()))
-                    } else {
-                        params.append(key, value.toString())
+                Object.entries(filters).forEach(([key, value]) => {
+                    if (value !== null && value !== undefined) {
+                        if (Array.isArray(value)) {
+                            value.forEach((v) => params.append(key, v.toString()))
+                        } else {
+                            params.append(key, value.toString())
+                        }
                     }
-                }
-            })
+                })
 
-            params.append('page', pageNum.toString())
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/scanner?${params}`)
+                params.append('page', pageNum.toString())
+                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/scanner?${params}`)
 
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
 
-            const apiResponse: ScannerApiResponse = await response.json()
-            const newData = apiResponse.pairs.map(convertToTokenData)
+                const apiResponse: ScannerApiResponse = await response.json()
+                const newData = apiResponse.pairs.map(convertToTokenData)
 
-            setData((prev) => (append ? [...prev, ...newData] : newData))
-            setHasMore(apiResponse.pairs.length > 0)
-            setError(null)
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'An error occurred')
-        } finally {
-            setLoading(false)
-        }
-    }, [filters])
+                setData((prev) => (append ? [...prev, ...newData] : newData))
+                setHasMore(apiResponse.pairs.length > 0)
+                setError(null)
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'An error occurred')
+            } finally {
+                setLoading(false)
+            }
+        },
+        [filters]
+    )
 
     const loadMore = useCallback(() => {
         if (!loading && hasMore) {

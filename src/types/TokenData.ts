@@ -1,4 +1,4 @@
-import type { SupportedChainName } from "./test-task-types"
+import type { SupportedChainName } from './test-task-types'
 
 export interface TokenData {
     id: string
