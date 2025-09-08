@@ -155,12 +155,22 @@ export interface ScannerResult {
   token0Decimals: number;
   token0Symbol: string;
   token1Address: string;
-  token1Decimals: string;
+  token1Decimals: number;
   token1ImageUri?: string | null;
   token1Name: string;
   token1Symbol: string;
   token1TotalSupplyFormatted: string;
   top10Holdings: string;
+  migratedFromPairCreatedAt: boolean,
+  token1DevWalletToTotalSupplyRatio: string | null,
+  token1InsiderWalletToTotalSupplyRatio: string | null,
+  token1BundlerWalletToTotalSupplyRatio: string | null,
+  token1SniperWalletToTotalSupplyRatio: string | null,
+  token1TraderWalletToTotalSupplyRatio: string | null,
+  token1Top10ToTotalSupplyRatio: string | null,
+  traderHoldings: string,
+  traders: number,
+  bundlers: number,
   twitterLink?: string | null;
   /**
    * @format int64
