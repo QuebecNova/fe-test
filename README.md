@@ -1,14 +1,14 @@
 # Test Task: Build React Scanner Tables Component
 
-## Overview
+## Libraries
 
-Libraries:
+Base: React, Typescript
 
-Base libraries: React, Typescript
-
-Tables: tanstack/react-table, tanstack/react-virtual
+Tables: Tanstack/react-table, Tanstack/react-virtual
 
 UI: Plain CSS
+
+## Misc
 
 Minimalistic approach with small amount of libraries to get the thing done
 
