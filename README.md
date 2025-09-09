@@ -15,3 +15,13 @@ Minimalistic approach with small amount of libraries to get the thing done
 Quite perfomant, no lags were observed
 
 Live: [Netlify](https://quebecnova-fe-test.netlify.app/)
+
+### To run in development use
+
+```
+npm install
+```
+
+```
+npm start
+```
