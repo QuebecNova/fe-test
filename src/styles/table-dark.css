@@ -150,8 +150,10 @@
 /* Table body */
 .table-body {
     position: relative;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     background: #1a1a1a;
+    height: 400px;
 }
 
 .token-row {
@@ -420,7 +422,6 @@ svg {
     opacity: 0.5;
 }
 
-/* Highlight effect on filter panel */
 .filter-panel {
     position: relative;
     overflow: hidden;
@@ -450,7 +451,16 @@ svg {
     justify-content: center;
     gap: 10px;
     color: #8cb4ff;
+}
+
+.token-table .loading-content {
+    padding: 30px 20px;
+    height: 100%;
+}
+
+.token-table .table-body .loading-content {
     padding: 12px 0;
+    height: auto;
 }
 
 .loading-spinner {

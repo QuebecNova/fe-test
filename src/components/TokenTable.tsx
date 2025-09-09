@@ -4,17 +4,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { TokenData } from '../types/TokenData'
 import { createColumns } from './Columns'
 
-const LoadingRow = () => {
-    return (
-        <div className="token-row loading-row">
-            <div className="token-cell loading-content">
-                <div className="loading-spinner"></div>
-                Loading more tokens...
-            </div>
-        </div>
-    )
-}
-
 export const TokenTable: React.FC<{
     title: string
     tokens: TokenData[]
@@ -89,7 +78,7 @@ export const TokenTable: React.FC<{
     const virtualItems = rowVirtualizer.getVirtualItems()
     const totalSize = rowVirtualizer.getTotalSize()
 
-    if (error) {
+    if (error && !loading) {
         return (
             <div className="token-table">
                 <h3>{title}</h3>
@@ -102,51 +91,86 @@ export const TokenTable: React.FC<{
         <div className="token-table">
             <div className="token-table-content">
                 <h3>{title}</h3>
+                {loading && !tokens.length && (
+                    <div className="loading-content">
+                        <div className="loading-spinner"></div>
+                        Loading tokens...
+                    </div>
+                )}
                 <div className="table-header">
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <div key={headerGroup.id} className="table-header-row">
-                            {headerGroup.headers.map((header) => (
-                                <div
-                                    key={header.id}
-                                    className={`table-header-cell table-header-${header.id}`}
-                                    style={{ width: header.getSize() }}
-                                    onClick={header.column.getToggleSortingHandler()}
-                                >
-                                    {header.id === 'tokenName' ? (
-                                        <>
-                                            {flexRender(header.column.columnDef.header, header.getContext())}
-                                            {{
-                                                asc: ' ↑',
-                                                desc: ' ↓',
-                                            }[header.column.getIsSorted() as string] ?? null}
-                                        </>
-                                    ) : (
-                                        <>
-                                            {{
-                                                asc: '↑ ',
-                                                desc: '↓ ',
-                                            }[header.column.getIsSorted() as string] ?? null}
-                                            {flexRender(header.column.columnDef.header, header.getContext())}
-                                        </>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-                    ))}
+                    {tokens.length
+                        ? table.getHeaderGroups().map((headerGroup) => (
+                              <div key={headerGroup.id} className="table-header-row">
+                                  {headerGroup.headers.map((header) => (
+                                      <div
+                                          key={header.id}
+                                          className={`table-header-cell table-header-${header.id}`}
+                                          style={{ width: header.getSize() }}
+                                          onClick={header.column.getToggleSortingHandler()}
+                                      >
+                                          {header.id === 'tokenName' ? (
+                                              <>
+                                                  {flexRender(header.column.columnDef.header, header.getContext())}
+                                                  {{
+                                                      asc: ' ↑',
+                                                      desc: ' ↓',
+                                                  }[header.column.getIsSorted() as string] ?? null}
+                                              </>
+                                          ) : (
+                                              <>
+                                                  {{
+                                                      asc: '↑ ',
+                                                      desc: '↓ ',
+                                                  }[header.column.getIsSorted() as string] ?? null}
+                                                  {flexRender(header.column.columnDef.header, header.getContext())}
+                                              </>
+                                          )}
+                                      </div>
+                                  ))}
+                              </div>
+                          ))
+                        : ''}
                 </div>
 
-                <div ref={parentRef} className="table-body" style={{ height: '400px', overflow: 'auto' }}>
-                    <div
-                        style={{
-                            height: `${totalSize}px`,
-                            width: '100%',
-                            position: 'relative',
-                        }}
-                    >
-                        {virtualItems.map((virtualItem) => {
-                            const index = virtualItem.index
+                {tokens.length ? (
+                    <div ref={parentRef} className="table-body">
+                        <div
+                            style={{
+                                height: `${totalSize}px`,
+                                width: '100%',
+                                position: 'relative',
+                            }}
+                        >
+                            {virtualItems.map((virtualItem) => {
+                                const index = virtualItem.index
 
-                            if (index >= rows.length) {
+                                if (index >= rows.length) {
+                                    return (
+                                        <div
+                                            key={virtualItem.key}
+                                            style={{
+                                                position: 'absolute',
+                                                top: 0,
+                                                left: 0,
+                                                width: '100%',
+                                                height: `${virtualItem.size}px`,
+                                                transform: `translateY(${virtualItem.start}px)`,
+                                            }}
+                                            className="token-row loading-row"
+                                        >
+                                            {loading && tokens.length ? (
+                                                <div className="token-cell loading-content">
+                                                    <div className="loading-spinner"></div>
+                                                    Loading more tokens...
+                                                </div>
+                                            ) : (
+                                                ''
+                                            )}
+                                        </div>
+                                    )
+                                }
+
+                                const row = rows[index]
                                 return (
                                     <div
                                         key={virtualItem.key}
@@ -158,45 +182,25 @@ export const TokenTable: React.FC<{
                                             height: `${virtualItem.size}px`,
                                             transform: `translateY(${virtualItem.start}px)`,
                                         }}
-                                        className="token-row loading-row"
+                                        className="token-row"
                                     >
-                                        <div className="loading-content">
-                                            <div className="loading-spinner"></div>
-                                            Loading more tokens...
-                                        </div>
+                                        {row.getVisibleCells().map((cell) => (
+                                            <div
+                                                key={cell.id}
+                                                className="token-cell"
+                                                style={{ width: cell.column.getSize() }}
+                                            >
+                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            </div>
+                                        ))}
                                     </div>
                                 )
-                            }
-
-                            const row = rows[index]
-                            return (
-                                <div
-                                    key={virtualItem.key}
-                                    style={{
-                                        position: 'absolute',
-                                        top: 0,
-                                        left: 0,
-                                        width: '100%',
-                                        height: `${virtualItem.size}px`,
-                                        transform: `translateY(${virtualItem.start}px)`,
-                                    }}
-                                    className="token-row"
-                                >
-                                    {row.getVisibleCells().map((cell) => (
-                                        <div
-                                            key={cell.id}
-                                            className="token-cell"
-                                            style={{ width: cell.column.getSize() }}
-                                        >
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </div>
-                                    ))}
-                                </div>
-                            )
-                        })}
+                            })}
+                        </div>
                     </div>
-                    {loading && tokens.length === 0 && <LoadingRow />}
-                </div>
+                ) : (
+                    ''
+                )}
             </div>
         </div>
     )
